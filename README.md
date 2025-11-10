@@ -34,12 +34,21 @@ This section outlines the key tasks and deliverables required to complete this a
 - Implement proper request validation and error handling
 - This endpoint will serve as the bridge between the frontend interface and the Inngest AgentKit background processing
 
+**What is an AI Agent?**
+
+An AI agent is an autonomous system that goes beyond simple LLM question-answering. It combines:
+- **Tool Usage:** Can call external functions, APIs, or services to accomplish tasks (e.g., searching databases, making calculations, fetching data via api or mcp)
+- **State & Memory:** Maintains context across interactions and remembers previous steps in a workflow
+- **Autonomy:** Operates independently in the background, making decisions without requiring human intervention for each step
+
+Unlike a simple chatbot that only responds to prompts (as defined in the @main.py file), an AI agent actively plans, executes, and adapts its approach to achieve a goal. With Inngest AgentKit, these agents run asynchronously as background workflows.
+
 ### 2. Integrate Inngest AgentKit
 
 **Objective:** Implement Inngest AgentKit to handle LLM agent operations asynchronously in the background.
 
 **Requirements:**
-- Review the [Inngest AgentKit documentation](https://docs.inngest.com/agentkit/) to understand the framework
+- Review the [Inngest AgentKit documentation](https://docs.inngest.com/agentkit/ and https://agentkit.inngest.com/overview) to understand the framework
 - Configure Inngest in your Flask application to enable background agent execution
 - Create an Inngest function that is triggered by your API endpoint
 - The Inngest function should orchestrate the AI agent workflow and handle the LLM processing
@@ -102,23 +111,23 @@ This section outlines the key tasks and deliverables required to complete this a
 ### Success Criteria
 
 Your assignment will be considered complete when:
-- ✅ The Flask API successfully triggers Inngest agent execution
-- ✅ Agents run asynchronously in the background without blocking the API
-- ✅ Agent responses are delivered back to the frontend GUI
-- ✅ The application is successfully deployed and running on Civo Cloud
-- ✅ The `__README.MD` contains clear, tested instructions for setup and usage
-- ✅ All components (Frontend, API, Inngest, Ollama LLM) work together end-to-end
+- The Flask API successfully triggers Inngest agent execution
+- Agents run asynchronously in the background without blocking the API
+- Agent responses are delivered back to the frontend GUI
+- The application is successfully deployed and running on Civo Cloud
+- The `__README.MD` contains clear, tested instructions for setup and usage
+- All components (Frontend, API, Inngest, Ollama LLM) work together end-to-end
 
 ### Additional Resources
 
-- [Inngest AgentKit Documentation](https://docs.inngest.com/agentkit/)
+- [Inngest AgentKit Documentation](https://docs.inngest.com/agentkit/ and https://agentkit.inngest.com/overview)
 - [Inngest Python SDK](https://www.inngest.com/docs/reference/python)
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [Ollama API Documentation](https://github.com/ollama/ollama/blob/main/docs/api.md)
 - [Civo Kubernetes Documentation](https://www.civo.com/docs/kubernetes)
 
 
-## Prerequisites
+## Project Deployment Prerequisites
 
 Before beginning, ensure you have the following:
 
@@ -142,8 +151,8 @@ Project configurations are managed within the `tf/variables.tf` file. This file 
 
 | Variable             | Description                                       | Type   | Default Value      |
 |----------------------|---------------------------------------------------|--------|--------------------|
-| `cluster_name`       | The name of the cluster.                          | string | "llm_cluster3"     |
-| `cluster_node_size`  | The GPU node instance to use for the cluster.     | string | "g4g.40.kube.small" |
+| `cluster_name`       | The name of the cluster.                          | string | "llm_cluster"     |
+| `cluster_node_size`  | The GPU node instance to use for the cluster.     | string | "g4s.kube.small" |
 | `cluster_node_count` | The number of nodes to provision in the cluster.  | number | 1                  |
 | `civo_token`         | The Civo API token, set in terraform.tfvars.      | string | N/A                |
 | `region`             | The Civo Region to deploy the cluster in.         | string | "LON1"             |
