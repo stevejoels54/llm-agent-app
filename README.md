@@ -20,6 +20,104 @@ The goal of this project is to enable customers to easily use Open Source Large 
 - enable LLMs in regulatory usecases where ChatGPT can't be used.
 
 
+## ASSIGNMENT OBJECTIVES
+
+This section outlines the key tasks and deliverables required to complete this assignment. Your objective is to extend the existing Flask application with asynchronous AI agent capabilities using Inngest AgentKit, and deploy the solution to Civo Cloud.
+
+### 1. Create LLM API Endpoint
+
+**Objective:** Extend the Flask application (`app/main.py`) to include a new API endpoint that serves as the entry point for LLM interactions from the frontend.
+
+**Requirements:**
+- Create a RESTful API endpoint (e.g., `/api/chat` or `/api/agent`) that accepts user queries/prompts
+- The endpoint should accept POST requests with JSON payloads containing user input
+- Implement proper request validation and error handling
+- This endpoint will serve as the bridge between the frontend interface and the Inngest AgentKit background processing
+
+### 2. Integrate Inngest AgentKit
+
+**Objective:** Implement Inngest AgentKit to handle LLM agent operations asynchronously in the background.
+
+**Requirements:**
+- Review the [Inngest AgentKit documentation](https://docs.inngest.com/agentkit/) to understand the framework
+- Configure Inngest in your Flask application to enable background agent execution
+- Create an Inngest function that is triggered by your API endpoint
+- The Inngest function should orchestrate the AI agent workflow and handle the LLM processing
+- Ensure the agent runs completely in the background without blocking the API response
+
+**Key Concepts:**
+- **Asynchronous Processing:** The API should immediately return a job/request ID to the frontend
+- **Background Execution:** Inngest agents run separately from the API request-response cycle
+- **Response Handling:** Implement a mechanism (webhooks, polling endpoint, or WebSocket) to deliver agent responses back to the frontend GUI when available
+
+### 3. Build a Custom AI Agent
+
+**Objective:** Design and implement an AI agent that demonstrates meaningful functionality beyond simple Q&A.
+
+**Requirements:**
+- Choose an agent type that showcases practical use cases (examples: research agent, code analysis agent, multi-step reasoning agent, etc.)
+- The agent should leverage the Ollama LLM infrastructure already deployed in the cluster
+- Implement proper agent state management and conversation context handling
+- Ensure the agent can handle multi-turn interactions if applicable
+- Add appropriate logging and monitoring for agent execution
+
+**Deliverables:**
+- A working agent that executes in the background via Inngest
+- Clear documentation of what the agent does and how it works
+- Response delivery mechanism that updates the frontend GUI when results are ready
+
+### 4. Deploy to Civo Cloud
+
+**Objective:** Deploy your enhanced application to the Civo Kubernetes cluster using the existing deployment pipeline.
+
+**Requirements:**
+- Build a Docker image containing your updated Flask application with Inngest integration
+- Push the image to a container registry (Docker Hub, Civo Container Registry, etc.)
+- Update the Helm chart configuration in `infra/helm/app` to reference your new image
+- Configure necessary environment variables for Inngest (API keys, endpoints, etc.)
+- Deploy the application to the Civo GPU cluster using Terraform
+- Verify that the application can communicate with the Ollama inference server in the cluster
+- Test the end-to-end flow: Frontend → API → Inngest Agent → LLM → Response to Frontend
+
+**Configuration Notes:**
+- Follow the deployment instructions in the "Building and deploying the Example Application" section
+- Ensure all secrets and API keys are properly managed (use Kubernetes secrets, not hardcoded values)
+- Update the `deploy_app` variable in `tf/variables.tf` to `true` to enable application deployment
+
+### 5. Update Documentation
+
+**Objective:** Create comprehensive documentation in `__README.MD` for running and testing the application.
+
+**Requirements:**
+- Document the complete setup process in simple, clear terms
+- Include instructions for local development and testing
+- Explain how to configure Inngest (API keys, environment variables)
+- Provide step-by-step deployment instructions
+- Include example API requests and expected responses
+- Add troubleshooting tips for common issues
+- Document the agent's capabilities and usage examples
+
+**Target Audience:** The documentation should be accessible to developers with basic Python and Docker knowledge.
+
+### Success Criteria
+
+Your assignment will be considered complete when:
+- ✅ The Flask API successfully triggers Inngest agent execution
+- ✅ Agents run asynchronously in the background without blocking the API
+- ✅ Agent responses are delivered back to the frontend GUI
+- ✅ The application is successfully deployed and running on Civo Cloud
+- ✅ The `__README.MD` contains clear, tested instructions for setup and usage
+- ✅ All components (Frontend, API, Inngest, Ollama LLM) work together end-to-end
+
+### Additional Resources
+
+- [Inngest AgentKit Documentation](https://docs.inngest.com/agentkit/)
+- [Inngest Python SDK](https://www.inngest.com/docs/reference/python)
+- [Flask Documentation](https://flask.palletsprojects.com/)
+- [Ollama API Documentation](https://github.com/ollama/ollama/blob/main/docs/api.md)
+- [Civo Kubernetes Documentation](https://www.civo.com/docs/kubernetes)
+
+
 ## Prerequisites
 
 Before beginning, ensure you have the following:
