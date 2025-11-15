@@ -21,7 +21,7 @@ variable "cluster_node_size" {
 # the number of nodes to provision in the cluster
 variable "cluster_node_count" {
   type        = number
-  default     = "1"
+  default     = "3"
   description = "The number of nodes to provision in the cluster"
 
 }
@@ -63,7 +63,7 @@ variable "deploy_ollama_ui" {
 variable "deploy_app" {
   description = "Deploy the example application."
   type        = bool
-  default     = false
+  default     = true
 }
 
 # deploy the Nvidia Device plugin to enable GPU Support
@@ -76,8 +76,8 @@ variable "deploy_nv_device_plugin_ds" {
 variable "default_models" {
   description = "List of default models to use in Ollama Web UI."
   type        = list(string)
-  # default     = ["llama3.2", "deepseek-r1"] #Include additional models here if required
-  default = ["llama3.3", "gemma3:4b", "qwen3:8b"]
+  # Using llama3.2 - same model as local development
+  default = ["llama3.2"]
 }
 
 variable "ollama_ui_image_version" {

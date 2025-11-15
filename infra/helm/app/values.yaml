@@ -2,10 +2,17 @@ replicaCount: 1
 
 image:
   # customise this to your own repository
-  repository: ghcr.io/civo-learn/llm-boilerplate-app
+  repository: docker.io/joelofelectronics/llm-agent-app
   pullPolicy: Always
   tag: "latest"
 
 service:
   type: LoadBalancer
   port: 80
+
+env:
+  inngestEnv: "prod"
+  
+secrets:
+  inngestSecretName: "inngest-secrets"
+  redisSecretName: "redis-secrets"

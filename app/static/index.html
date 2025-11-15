@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e0e0e0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .agent-info {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .agent-badge {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .agent-badge.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .agent-badge:not(.active) {
+            background: #f0f0f0;
+            color: #666;
+            border-color: #e0e0e0;
+        }
+
+        .agent-badge:hover:not(.active) {
+            border-color: #667eea;
+        }
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .job-card {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .job-id {
+            font-size: 0.85rem;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .job-prompt {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        .job-result {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .result-type {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .sub-questions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .sub-question {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .sub-question-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            display: inline;
+            line-height: 1.6;
+        }
+        
+        .sub-question-title strong {
+            font-weight: 600;
+        }
+
+        .reasoning-steps {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .reasoning-step {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            display: inline;
+            line-height: 1.6;
+        }
+        
+        .step-title strong {
+            font-weight: 600;
+        }
+
+        .formatted-content {
+            margin-top: 10px;
+        }
+
+        .formatted-content h1,
+        .formatted-content h2,
+        .formatted-content h3 {
+            margin: 15px 0 10px 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .formatted-content h1 {
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .formatted-content h2 {
+            font-size: 1.3rem;
+        }
+
+        .formatted-content h3 {
+            font-size: 1.1rem;
+            color: #667eea;
+        }
+
+        .formatted-content h4 {
+            font-size: 1rem;
+            color: #555;
+            margin: 12px 0 8px 0;
+            font-weight: 600;
+        }
+
+        .formatted-content h5 {
+            font-size: 0.95rem;
+            color: #666;
+            margin: 10px 0 6px 0;
+            font-weight: 600;
+        }
+
+        .formatted-content p {
+            margin: 10px 0;
+            line-height: 1.7;
+        }
+
+        .formatted-content ul,
+        .formatted-content ol {
+            margin: 10px 0 10px 20px;
+            padding-left: 20px;
+        }
+
+        .formatted-content ul {
+            list-style-type: disc;
+        }
+
+        .formatted-content ol {
+            list-style-type: decimal;
+        }
+
+        .formatted-content li {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        .formatted-content strong {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .formatted-content em {
+            font-style: italic;
+        }
+
+        .formatted-content br {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Agent Interface</h1>
+            <p>Powered by Inngest AgentKit & Ollama LLM</p>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="agent-info">
+                    <div class="agent-badge active" data-type="auto">🎯 Auto-Detect</div>
+                    <div class="agent-badge" data-type="research">🔬 Research</div>
+                    <div class="agent-badge" data-type="reasoning">🧠 Reasoning</div>
+                    <div class="agent-badge" data-type="simple">💬 Simple Q&A</div>
+                </div>
+
+                <div class="input-group">
+                    <textarea 
+                        id="promptInput" 
+                        placeholder="Ask me anything... Try: 'Research the benefits of microservices' or 'Explain how transformers work step by step'"
+                    ></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="submitBtn" onclick="sendRequest()">
+                        Send Request
+                    </button>
+                    <button class="btn-secondary" onclick="clearResults()">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h3 style="margin-bottom: 15px; color: #333;">Active Jobs</h3>
+                <div id="resultsContainer">
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        <p>No jobs yet. Send a request to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        const jobs = {};
+        let selectedAgentType = 'auto';
+
+        // Agent type selection
+        document.querySelectorAll('.agent-badge').forEach(badge => {
+            badge.addEventListener('click', () => {
+                document.querySelectorAll('.agent-badge').forEach(b => b.classList.remove('active'));
+                badge.classList.add('active');
+                selectedAgentType = badge.dataset.type;
+            });
+        });
+
+        // Handle Enter key in textarea (Shift+Enter for new line)
+        document.getElementById('promptInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendRequest();
+            }
+        });
+
+        async function sendRequest() {
+            const promptInput = document.getElementById('promptInput');
+            const prompt = promptInput.value.trim();
+            
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const response = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt, agent_type: selectedAgentType })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const jobId = data.job_id;
+                    jobs[jobId] = {
+                        prompt,
+                        status: 'processing',
+                        result: null,
+                        error: null
+                    };
+                    
+                    promptInput.value = '';
+                    renderJobs();
+                    pollJobStatus(jobId);
+                } else {
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                alert(`Failed to send request: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Send Request';
+            }
+        }
+
+        async function pollJobStatus(jobId) {
+            const maxAttempts = 120; // 2 minutes with 1s intervals
+            let attempts = 0;
+
+            const poll = async () => {
+                if (attempts >= maxAttempts) {
+                    jobs[jobId].status = 'failed';
+                    jobs[jobId].error = 'Timeout: Job took too long to complete';
+                    updateJobCard(jobId);
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_BASE}/api/status/${jobId}`);
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        jobs[jobId].status = data.status;
+                        jobs[jobId].result = data.result;
+                        jobs[jobId].error = data.error;
+                        // Update only the specific job card instead of re-rendering everything
+                        updateJobCard(jobId);
+
+                        if (data.status === 'processing') {
+                            attempts++;
+                            setTimeout(poll, 1000);
+                        }
+                    } else {
+                        jobs[jobId].status = 'failed';
+                        jobs[jobId].error = data.error || 'Unknown error';
+                        updateJobCard(jobId);
+                    }
+                } catch (error) {
+                    jobs[jobId].status = 'failed';
+                    jobs[jobId].error = error.message;
+                    updateJobCard(jobId);
+                }
+            };
+
+            poll();
+        }
+
+        function renderJobs() {
+            const container = document.getElementById('resultsContainer');
+            const jobEntries = Object.entries(jobs).reverse();
+
+            if (jobEntries.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        <p>No jobs yet. Send a request to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = jobEntries.map(([jobId, job]) => `
+                <div class="job-card" data-job-id="${jobId}">
+                    <div class="job-header">
+                        <span class="job-id">Job ID: ${jobId}</span>
+                        <span class="status-badge status-${job.status}">
+                            ${job.status === 'processing' ? '<span class="loader"></span>' : ''}
+                            ${job.status.toUpperCase()}
+                        </span>
+                    </div>
+                    
+                    <div class="job-prompt">
+                        <strong>📝 Prompt:</strong> ${escapeHtml(job.prompt)}
+                    </div>
+
+                    ${renderResult(job)}
+                </div>
+            `).join('');
+        }
+
+        function updateJobCard(jobId) {
+            const job = jobs[jobId];
+            if (!job) return;
+
+            const jobCard = document.querySelector(`[data-job-id="${jobId}"]`);
+            if (!jobCard) {
+                // Job card doesn't exist, do a full render
+                renderJobs();
+                return;
+            }
+
+            // Update only the status badge
+            const statusBadge = jobCard.querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.className = `status-badge status-${job.status}`;
+                statusBadge.innerHTML = `
+                    ${job.status === 'processing' ? '<span class="loader"></span>' : ''}
+                    ${job.status.toUpperCase()}
+                `;
+            }
+
+            // Update the result section - find or create it
+            let resultSection = jobCard.querySelector('.job-result');
+            const newResultHtml = renderResult(job);
+            
+            if (resultSection) {
+                // Replace existing result section
+                resultSection.outerHTML = newResultHtml;
+            } else {
+                // Result section doesn't exist, insert it after the prompt
+                const promptDiv = jobCard.querySelector('.job-prompt');
+                if (promptDiv) {
+                    promptDiv.insertAdjacentHTML('afterend', newResultHtml);
+                }
+            }
+        }
+
+        function renderResult(job) {
+            if (job.status === 'processing') {
+                return '<div class="job-result">⏳ Agent is processing your request...</div>';
+            }
+
+            if (job.status === 'failed') {
+                return `<div class="job-result">❌ <strong>Error:</strong> ${escapeHtml(job.error || 'Unknown error')}</div>`;
+            }
+
+            if (!job.result) {
+                return '<div class="job-result">✅ Completed (no result data)</div>';
+            }
+            
+            // Wrap result content in job-result div for consistent structure
+            let resultContent = '';
+
+            const result = job.result;
+            resultContent += `<span class="result-type">${formatResultType(result.type || 'Response')}</span>`;
+
+            if (result.type === 'research_report') {
+                resultContent += `<div><strong>🎯 Original Question:</strong> <span class="formatted-content">${formatMarkdown(result.original_question)}</span></div>`;
+                resultContent += `<div class="sub-questions"><strong>📚 Research Sub-Questions:</strong>`;
+                result.sub_questions?.forEach((sq, i) => {
+                    // Format the question number and text, handling cases like "3. **text**"
+                    let questionText = sq.question;
+                    // If question starts with a number (like "3. **text**"), format it properly
+                    if (/^\d+\.\s/.test(questionText)) {
+                        const match = questionText.match(/^(\d+)\.\s(.+)$/);
+                        if (match) {
+                            const num = match[1];
+                            const text = match[2];
+                            // Use inline formatting only (no block elements)
+                            const formattedText = formatInlineMarkdown(text);
+                            questionText = `${num}. ${formattedText}`;
+                        }
+                    } else {
+                        questionText = formatInlineMarkdown(questionText);
+                    }
+                    resultContent += `<div class="sub-question">
+                        <div class="sub-question-title">${questionText}</div>
+                        <div class="formatted-content">${formatMarkdown(sq.answer)}</div>
+                    </div>`;
+                });
+                resultContent += `</div>`;
+                resultContent += `<div style="margin-top: 15px;"><strong>📊 Synthesis:</strong><div class="formatted-content">${formatMarkdown(result.synthesis)}</div></div>`;
+            } else if (result.type === 'reasoning_explanation') {
+                resultContent += `<div><strong>🎯 Question:</strong> <span class="formatted-content">${formatMarkdown(result.original_question)}</span></div>`;
+                resultContent += `<div class="reasoning-steps"><strong>🧠 Reasoning Steps:</strong>`;
+                result.reasoning_steps?.forEach((step, i) => {
+                    // Format the step title, handling cases like "1. **text**"
+                    let stepText = step.step;
+                    // If step starts with a number, format it properly
+                    if (/^\d+\.\s/.test(stepText)) {
+                        const match = stepText.match(/^(\d+)\.\s(.+)$/);
+                        if (match) {
+                            const num = match[1];
+                            const text = match[2];
+                            // Use inline formatting only (no block elements)
+                            const formattedText = formatInlineMarkdown(text);
+                            stepText = `${num}. ${formattedText}`;
+                        }
+                    } else {
+                        stepText = formatInlineMarkdown(stepText);
+                    }
+                    resultContent += `<div class="reasoning-step">
+                        <div class="step-title">${stepText}</div>
+                        <div class="formatted-content">${formatMarkdown(step.explanation)}</div>
+                    </div>`;
+                });
+                resultContent += `</div>`;
+                resultContent += `<div style="margin-top: 15px;"><strong>📊 Final Explanation:</strong><div class="formatted-content">${formatMarkdown(result.final_explanation)}</div></div>`;
+            } else if (result.type === 'simple_answer') {
+                resultContent += `<div><strong>💬 Answer:</strong><div class="formatted-content">${formatMarkdown(result.answer)}</div></div>`;
+            } else {
+                resultContent += `<pre>${escapeHtml(JSON.stringify(result, null, 2))}</pre>`;
+            }
+
+            return `<div class="job-result">${resultContent}</div>`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatResultType(type) {
+            const typeMap = {
+                'research_report': 'Research Report',
+                'reasoning_explanation': 'Reasoning Explanation',
+                'simple_answer': 'Simple Answer',
+                'Response': 'Response'
+            };
+            return typeMap[type] || type.split('_').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        function formatMarkdown(text) {
+            if (!text) return '';
+            
+            // Split into lines for processing
+            const lines = text.split('\n');
+            const processed = [];
+            let inList = false;
+            let isNumberedList = false;
+            let listItems = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                const trimmed = line.trim();
+                
+                // Headers - check from most specific to least specific
+                if (trimmed.startsWith('##### ')) {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    let headerText = trimmed.substring(6);
+                    headerText = processInlineFormatting(headerText);
+                    processed.push(`<h5>${headerText}</h5>`);
+                    continue;
+                } else if (trimmed.startsWith('#### ')) {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    let headerText = trimmed.substring(5);
+                    headerText = processInlineFormatting(headerText);
+                    processed.push(`<h4>${headerText}</h4>`);
+                    continue;
+                } else if (trimmed.startsWith('### ')) {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    let headerText = trimmed.substring(4);
+                    headerText = processInlineFormatting(headerText);
+                    processed.push(`<h3>${headerText}</h3>`);
+                    continue;
+                } else if (trimmed.startsWith('## ')) {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    let headerText = trimmed.substring(3);
+                    headerText = processInlineFormatting(headerText);
+                    processed.push(`<h2>${headerText}</h2>`);
+                    continue;
+                } else if (trimmed.startsWith('# ')) {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    let headerText = trimmed.substring(2);
+                    headerText = processInlineFormatting(headerText);
+                    processed.push(`<h1>${headerText}</h1>`);
+                    continue;
+                }
+                
+                // Bullet lists (starts with "* " at beginning of line)
+                if (/^\* /.test(trimmed)) {
+                    if (!inList) {
+                        inList = true;
+                        isNumberedList = false;
+                    }
+                    // Remove the "* " prefix and process inline formatting
+                    let content = trimmed.substring(2);
+                    content = processInlineFormatting(content);
+                    // Escape HTML but preserve our formatting tags
+                    content = escapeHtmlButPreserveTags(content);
+                    listItems.push(`<li>${content}</li>`);
+                    continue;
+                }
+                
+                // Numbered lists (starts with "1. ", "2. ", etc.)
+                if (/^\d+\. /.test(trimmed)) {
+                    if (!inList) {
+                        inList = true;
+                        isNumberedList = true;
+                    }
+                    // Remove the number prefix
+                    let content = trimmed.replace(/^\d+\. /, '');
+                    content = processInlineFormatting(content);
+                    // Escape HTML but preserve our formatting tags
+                    content = escapeHtmlButPreserveTags(content);
+                    listItems.push(`<li>${content}</li>`);
+                    continue;
+                }
+                
+                // Empty line - close list if open
+                if (trimmed === '') {
+                    if (inList) {
+                        processed.push(closeList(listItems, isNumberedList));
+                        listItems = [];
+                        inList = false;
+                    }
+                    processed.push('');
+                    continue;
+                }
+                
+                // Regular paragraph line
+                if (inList) {
+                    processed.push(closeList(listItems, isNumberedList));
+                    listItems = [];
+                    inList = false;
+                }
+                
+                // Process inline formatting and escape
+                let formatted = processInlineFormatting(trimmed);
+                formatted = escapeHtmlButPreserveTags(formatted);
+                processed.push(formatted);
+            }
+            
+            // Close any remaining list
+            if (inList) {
+                processed.push(closeList(listItems, isNumberedList));
+            }
+            
+            // Join and wrap consecutive non-empty lines in paragraphs
+            let html = processed.join('\n');
+            const paragraphs = html.split(/\n\n+/);
+            html = paragraphs.map(p => {
+                p = p.trim();
+                if (!p) return '';
+                // If it's already a header or list, return as-is
+                if (p.startsWith('<h') || p.startsWith('<ul') || p.startsWith('<ol')) {
+                    return p;
+                }
+                // Replace single newlines with <br> for line breaks within paragraph
+                p = p.replace(/\n/g, '<br>');
+                return '<p>' + p + '</p>';
+            }).join('');
+            
+            return html;
+        }
+        
+        function formatInlineMarkdown(text) {
+            if (!text) return '';
+            // Only process inline formatting (bold, italic) - no block elements
+            // Process formatting first
+            text = processInlineFormatting(text);
+            // Escape HTML but preserve our formatting tags
+            text = escapeHtmlButPreserveTags(text);
+            return text;
+        }
+        
+        function processInlineFormatting(text) {
+            // Convert bold (**text** -> <strong>text</strong>)
+            // Use non-greedy matching and handle multiple bold sections
+            text = text.replace(/\*\*([^*]+(?:\*(?!\*)[^*]*)*)\*\*/g, '<strong>$1</strong>');
+            // Convert italic (_text_ or *text* but not at start of line and not part of **)
+            text = text.replace(/(?<!\*)\*([^*\n]+?)\*(?!\*)/g, '<em>$1</em>');
+            text = text.replace(/_([^_\n]+?)_/g, '<em>$1</em>');
+            return text;
+        }
+        
+        function escapeHtmlButPreserveTags(text) {
+            // First, temporarily replace our safe tags with placeholders
+            const placeholders = {};
+            let placeholderIndex = 0;
+            
+            text = text.replace(/<strong>(.*?)<\/strong>/gi, (match, content) => {
+                const key = `__STRONG_${placeholderIndex}__`;
+                placeholders[key] = match;
+                placeholderIndex++;
+                return key;
+            });
+            
+            text = text.replace(/<em>(.*?)<\/em>/gi, (match, content) => {
+                const key = `__EM_${placeholderIndex}__`;
+                placeholders[key] = match;
+                placeholderIndex++;
+                return key;
+            });
+            
+            // Now escape HTML
+            text = escapeHtml(text);
+            
+            // Restore our safe tags
+            Object.keys(placeholders).forEach(key => {
+                text = text.replace(key, placeholders[key]);
+            });
+            
+            return text;
+        }
+        
+        function closeList(items, isNumbered) {
+            if (items.length === 0) return '';
+            const tag = isNumbered ? 'ol' : 'ul';
+            return `<${tag}>${items.join('')}</${tag}>`;
+        }
+
+        function clearResults() {
+            if (Object.keys(jobs).length === 0 || confirm('Clear all results?')) {
+                Object.keys(jobs).forEach(key => delete jobs[key]);
+                renderJobs();
+            }
+        }
+
+        // Load previous chats from Redis on page load
+        async function loadPreviousChats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/jobs?limit=100`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.jobs && data.jobs.length > 0) {
+                        // Clear existing jobs and load from Redis
+                        Object.keys(jobs).forEach(key => delete jobs[key]);
+                        
+                        // Add all loaded jobs
+                        data.jobs.forEach(job => {
+                            if (job.job_id) {
+                                jobs[job.job_id] = {
+                                    prompt: job.prompt || '',
+                                    status: job.status || 'unknown',
+                                    result: job.result || null,
+                                    error: job.error || null
+                                };
+                                
+                                // Continue polling if still processing
+                                if (job.status === 'processing') {
+                                    pollJobStatus(job.job_id);
+                                }
+                            }
+                        });
+                        
+                        renderJobs();
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load previous chats:', error);
+                // Continue with empty state if loading fails
+            }
+        }
+
+        // Initial render and load previous chats
+        loadPreviousChats();
+    </script>
+</body>
+</html>

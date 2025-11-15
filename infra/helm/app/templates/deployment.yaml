@@ -18,3 +18,43 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80
+          env:
+            - name: INNGEST_ENV
+              value: {{ .Values.env.inngestEnv | quote }}
+            - name: INNGEST_APP_ID
+              value: "llm-agent-app"
+            - name: INNGEST_SIGNING_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.inngestSecretName }}
+                  key: signing-key
+            - name: INNGEST_EVENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.inngestSecretName }}
+                  key: event-key
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.redisSecretName }}
+                  key: redis-host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.redisSecretName }}
+                  key: redis-port
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.redisSecretName }}
+                  key: redis-username
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.redisSecretName }}
+                  key: redis-password
+            - name: REDIS_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.redisSecretName }}
+                  key: redis-db
