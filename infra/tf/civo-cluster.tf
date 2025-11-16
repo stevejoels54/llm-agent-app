@@ -5,7 +5,7 @@ resource "civo_kubernetes_cluster" "cluster" {
   firewall_id = civo_firewall.firewall.id
   network_id  = civo_network.network.id
 
-  # Cluster type must be talos for GPU support
+  # Cluster type: talos (immutable OS - supports both GPU and CPU nodes)
   cluster_type       = "talos"
   kubernetes_version = "1.27.0"
 

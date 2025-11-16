@@ -20,8 +20,11 @@ resource "helm_release" "ollama" {
     value = var.default_models
   }
 
-  depends_on = [
-    kubernetes_daemonset.nvidia-device-plugin-daemonset
-  ]
+  # Wait for cluster to be fully ready before deploying
+  depends_on = [local_file.cluster-config]
 
+  # No dependency on GPU device plugin for CPU-only deployment
+  # depends_on = [
+  #   kubernetes_daemonset.nvidia-device-plugin-daemonset
+  # ]
 }

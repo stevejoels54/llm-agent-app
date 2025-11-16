@@ -1,8 +1,8 @@
 ollama:
   gpu:
-    # -- Enable GPU integration
-    enabled: true
-    # -- Specify the number of GPU to 1
+    # -- Enable GPU integration (disabled for CPU-only deployment)
+    enabled: false
+    # -- Specify the number of GPU to 1 (not used when enabled=false)
     number: 1
     
 persistentVolume:

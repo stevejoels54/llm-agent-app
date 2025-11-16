@@ -12,6 +12,7 @@ service:
 
 env:
   inngestEnv: "prod"
+  inngestAppId: "llm-agent-app"
   
 secrets:
   inngestSecretName: "inngest-secrets"

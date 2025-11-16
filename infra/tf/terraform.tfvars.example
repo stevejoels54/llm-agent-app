@@ -1,1 +1,18 @@
-civo_token = "YOUR CIVO API TOKEN"
+civo_token = "YOUR_CIVO_API_TOKEN"
+
+# Application Environment Configuration (Optional - has defaults)
+inngest_env   = "prod"          # Options: dev, prod, production
+inngest_app_id = "llm-agent-app" # Inngest application ID
+
+# Application Secrets (Required if deploy_app = true)
+# Get Inngest keys from: https://app.inngest.com/env/[your-env]/keys
+inngest_signing_key = "YOUR_INNGEST_SIGNING_KEY"
+inngest_event_key   = "YOUR_INNGEST_EVENT_KEY"
+
+# Redis Configuration (Required if deploy_app = true)
+# Update with your Redis connection details
+redis_host     = "redis-18179.c311.eu-central-1-1.ec2.cloud.redislabs.com"
+redis_port     = "18179"
+redis_username = "default"
+redis_password = "YOUR_REDIS_PASSWORD"
+redis_db       = "0"

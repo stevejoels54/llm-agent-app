@@ -17,12 +17,12 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: INNGEST_ENV
               value: {{ .Values.env.inngestEnv | quote }}
             - name: INNGEST_APP_ID
-              value: "llm-agent-app"
+              value: {{ .Values.env.inngestAppId | quote }}
             - name: INNGEST_SIGNING_KEY
               valueFrom:
                 secretKeyRef:

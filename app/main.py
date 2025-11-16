@@ -167,7 +167,7 @@ except Exception as e:
 
 if __name__ == '__main__':
     if is_running_in_container():
-        app.run(debug=True, host='0.0.0.0', port=80)
+        app.run(debug=True, host='0.0.0.0', port=8080)  # Use 8080 for non-root container
     else:
         app.run(debug=True, host='0.0.0.0', port=5050)
-    print(f"App running on port {5050 if not is_running_in_container() else 80}")
+    print(f"App running on port {5050 if not is_running_in_container() else 8080}")
